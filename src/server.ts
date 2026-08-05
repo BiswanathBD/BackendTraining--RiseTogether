@@ -1,10 +1,80 @@
 import app from "./app.js";
-import dotenv from "dotenv";
+import { Server } from "http";
+import http from "http";
+import { env } from "./config/env.js";
 
-dotenv.config();
+// app.listen(env.PORT, () => {
+//   console.log(`Server is running on port - ${env.PORT}`);
+// });
 
-const PORT = process.env.PORT || 5000;
+const server: Server = http.createServer(app);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port - ${PORT}`);
+const bootstrap = async () => {
+  server.listen(env.PORT, () => {
+    console.log(`HTTP Server is running on port ${env.PORT}`);
+  });
+};
+
+bootstrap();
+
+//----------- gracefully shutdown -----------//
+// process.on("SIGINT", () => {
+//   // server close when pressed ctrl+c - its for developer
+//   server.close(() => {
+//     console.log("Server closed by pressing ctrl+c");
+//     process.exit(0);
+//   });
+// });
+
+// process.on("SIGTERM", () => {
+//   // no new request accepted, pending request will be completed
+//   server.close(() => {
+//     console.log("Server closed after completing pending requests");
+//     process.exit(0);
+//   });
+// });
+
+// process.on("uncaughtException", (error) => {
+//   // get that sync error which is not handled by try catch
+//   console.error("Sync Error:", error);
+//   process.exit(1);
+// });
+
+// process.on("unhandledRejection", (error) => {
+//   // get that async/promise error which is not handled by try catch
+//   console.error("Async/Promise Error:", error);
+//   server.close(() => {
+//     process.exit(1);
+//   });
+// });
+
+// reusable function for graceful shutdown
+const gracefullyShutdown = (message: string, exitCode: number) => {
+  console.log(message);
+  server.close(() => {
+    console.log(`Server closed successfully`);
+    process.exit(exitCode);
+  });
+};
+
+//----------- gracefully shutdown -----------//
+process.on("SIGINT", () => {
+  gracefullyShutdown("Server closed by pressing ctrl+c", 0);
+});
+
+process.on("SIGTERM", () => {
+  gracefullyShutdown("Server closed after completing pending requests", 0);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Sync Error:", error);
+  gracefullyShutdown("Sync error which is not handled by try catch", 1);
+});
+
+process.on("unhandledRejection", (error) => {
+  console.error("Async/Promise Error:", error);
+  gracefullyShutdown(
+    "Async/Promise error which is not handled by try catch",
+    1,
+  );
 });
