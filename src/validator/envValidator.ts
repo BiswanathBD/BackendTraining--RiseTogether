@@ -5,8 +5,8 @@ dotenv.config();
 
 const envSchema = z.object({
   PORT: z.string(),
-  // NODE_ENV: z.string(),
   NODE_ENV: z.enum(["development", "production"]),
+  DATABASE_URL: z.string(),
 });
 
 const validateEnv = () => {
