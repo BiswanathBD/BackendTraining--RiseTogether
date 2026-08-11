@@ -6,11 +6,13 @@ class ApiResponse {
     statusCode: number,
     message: string,
     data: any,
+    pagination?: any,
   ) {
     return res.status(statusCode).json({
       statusCode,
       success: true,
       message,
+      pagination,
       data,
     });
   }

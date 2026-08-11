@@ -1,0 +1,6 @@
+model Country {
+  countryId Int @id @default(autoincrement())
+  countryName String
+
+  users User[]
+}

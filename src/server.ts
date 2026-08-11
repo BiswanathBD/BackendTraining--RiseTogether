@@ -2,23 +2,16 @@ import app from "./app.js";
 import { Server } from "http";
 import http from "http";
 import { env } from "./config/env.js";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "./generated/prisma/client.js";
+import { prisma } from "./lib/prisma.js";
 
 const server: Server = http.createServer(app);
 
-const adapter = new PrismaPg({
-  connectionString: env.DATABASE_URL,
-});
-
-const prisma = new PrismaClient({
-  adapter,
-});
-
 const bootstrap = async () => {
   await prisma.$connect();
+  await prisma.$queryRaw`SELECT 1`;
+
   console.log("✅ Database connected successfully");
-  
+
   server.listen(env.PORT, () => {
     console.log(`HTTP Server is running on port ${env.PORT}`);
   });
