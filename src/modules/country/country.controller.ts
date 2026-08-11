@@ -10,7 +10,7 @@ const addCountry = catchAsync(async (req: Request, res: Response) => {
 
   const result = await countryService.addCountry(countryName);
 
-  return ApiResponse.success(res, 201, "Country added successfully", result);
+  return ApiResponse.success(res, 200, "Country added successfully", result);
 });
 
 // get countries
@@ -44,7 +44,7 @@ const updateCountry = catchAsync(async (req: Request, res: Response) => {
     countryName,
   );
 
-  return ApiResponse.success(res, 201, "Country updated successfully", result);
+  return ApiResponse.success(res, 200, "Country updated successfully", result);
 });
 
 // delete country name
@@ -56,7 +56,7 @@ const deleteCountry = catchAsync(async (req: Request, res: Response) => {
 
   const result = await countryService.deleteCountry(Number(countryId));
 
-  return ApiResponse.success(res, 201, "Country updated successfully", result);
+  return ApiResponse.success(res, 200, "Country updated successfully", result);
 });
 
 const CountryController = {

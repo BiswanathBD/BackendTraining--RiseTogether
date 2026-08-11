@@ -3,14 +3,21 @@ import { Server } from "http";
 import http from "http";
 import { env } from "./config/env.js";
 import { prisma } from "./lib/prisma.js";
+import { transporter } from "./config/transporter.js";
 
 const server: Server = http.createServer(app);
 
 const bootstrap = async () => {
   await prisma.$connect();
   await prisma.$queryRaw`SELECT 1`;
+  console.log("Database connected successfully");
 
-  console.log("✅ Database connected successfully");
+  try {
+    await transporter.verify();
+    console.log("Nodemailer is ready to take our messages");
+  } catch (err) {
+    console.error("Verification failed:", err);
+  }
 
   server.listen(env.PORT, () => {
     console.log(`HTTP Server is running on port ${env.PORT}`);

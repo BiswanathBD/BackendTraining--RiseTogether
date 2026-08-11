@@ -7,6 +7,10 @@ const envSchema = z.object({
   PORT: z.string(),
   NODE_ENV: z.enum(["development", "production"]),
   DATABASE_URL: z.string(),
+  SMTP_PORT: z.string(),
+  SMTP_USER: z.email(),
+  SMTP_PASS: z.string(),
+  SMTP_FROM: z.string(),
 });
 
 const validateEnv = () => {
