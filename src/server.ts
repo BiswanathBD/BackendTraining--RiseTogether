@@ -4,6 +4,7 @@ import http from "http";
 import { env } from "./config/env.js";
 import { prisma } from "./lib/prisma.js";
 import { transporter } from "./config/transporter.js";
+import { connectRedis } from "./lib/redis.js";
 
 const server: Server = http.createServer(app);
 
@@ -18,6 +19,9 @@ const bootstrap = async () => {
   } catch (err) {
     console.error("Verification failed:", err);
   }
+
+  // connect redis
+  await connectRedis()
 
   server.listen(env.PORT, () => {
     console.log(`HTTP Server is running on port ${env.PORT}`);

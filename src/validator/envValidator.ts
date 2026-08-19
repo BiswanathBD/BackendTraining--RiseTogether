@@ -11,6 +11,7 @@ const envSchema = z.object({
   SMTP_USER: z.email(),
   SMTP_PASS: z.string(),
   SMTP_FROM: z.string(),
+  REDIS_URL: z.string(),
 });
 
 const validateEnv = () => {
