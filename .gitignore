@@ -1,8 +1,8 @@
 node_modules/
-.env
 dist/
 
 *.log
 coverage/
 /src/generated/prisma
 compose.yaml
+config.bat
