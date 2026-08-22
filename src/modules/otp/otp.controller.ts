@@ -15,5 +15,5 @@ export const getOtpController = async (req: Request, res: Response) => {
 
   const result = await getOtp(email);
 
-  ApiResponse.success(res, 200, "OTP generated successfully", result);
+  ApiResponse.success(res, 200, "Get otp successfully", result);
 };

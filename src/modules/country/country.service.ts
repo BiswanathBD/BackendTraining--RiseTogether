@@ -1,32 +1,35 @@
 import AppError from "../../utils/AppError.js";
 import { prisma } from "../../lib/prisma.js";
 
-// add new country
+// Add new country
 const addCountry = async (countryName: string) => {
-  if (!countryName) {
-    throw new AppError(400, "Country name is required");
-  }
+  // check country existence
+  const countryExiting = await prisma.countries.findUnique({
+    where: { countryName },
+  });
+  if (countryExiting) throw new AppError(409, "Country already exit");
 
-  const res = await prisma.country.create({
+  const result = await prisma.countries.create({
     data: {
       countryName,
     },
   });
 
-  return res;
+  return result;
 };
 
-// get countries with pagination
+// Get countries with pagination
 const getCountries = async (page: number, limit: number) => {
   const skip = (page - 1) * limit;
 
-  const countries = await prisma.country.findMany({
+  const countries = await prisma.countries.findMany({
     skip,
     take: limit,
   });
 
-  const total = await prisma.country.count();
+  const total = await prisma.countries.count();
   const totalPages = Math.ceil(total / limit);
+
   const pagination = {
     page,
     limit,
@@ -34,23 +37,35 @@ const getCountries = async (page: number, limit: number) => {
     totalPages,
   };
 
-  return { pagination, countries };
+  return {
+    pagination,
+    countries,
+  };
 };
 
-// update country name
-const updateCountry = async (countryId: number, countryName: string) => {
-  const res = await prisma.country.update({
-    where: { countryId },
-    data: { countryName },
+// Update country name
+const updateCountry = async (countryId: string, countryName: string) => {
+  const result = await prisma.countries.update({
+    where: {
+      countryId,
+    },
+    data: {
+      countryName,
+    },
   });
 
-  return res;
+  return result;
 };
 
-// delete country
-const deleteCountry = async (countryId: number) => {
-  const res = await prisma.country.delete({ where: { countryId } });
-  return res;
+// Delete country
+const deleteCountry = async (countryId: string) => {
+  const result = await prisma.countries.delete({
+    where: {
+      countryId,
+    },
+  });
+
+  return result;
 };
 
 const countryService = {
