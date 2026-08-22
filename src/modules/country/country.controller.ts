@@ -4,16 +4,20 @@ import countryService from "./country.service.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import AppError from "../../utils/AppError.js";
 
-// add country
+// Add country
 const addCountry = catchAsync(async (req: Request, res: Response) => {
   const { countryName } = req.body;
 
+  if (!countryName) {
+    throw new AppError(400, "Country name is required");
+  }
+
   const result = await countryService.addCountry(countryName);
 
-  return ApiResponse.success(res, 200, "Country added successfully", result);
+  return ApiResponse.success(res, 201, "Country added successfully", result);
 });
 
-// get countries
+// Get countries
 const getCountries = catchAsync(async (req: Request, res: Response) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
@@ -22,41 +26,34 @@ const getCountries = catchAsync(async (req: Request, res: Response) => {
 
   return ApiResponse.success(
     res,
-    201,
-    "Country added successfully",
+    200,
+    "Countries fetched successfully",
     result.countries,
     result.pagination,
   );
 });
 
-// update country name
+// Update country name
 const updateCountry = catchAsync(async (req: Request, res: Response) => {
   const { countryId, countryName } = req.body;
-  if (!countryId) {
-    throw new AppError(404, "Country id required");
-  }
-  if (!countryName) {
-    throw new AppError(404, "Country name required");
-  }
 
-  const result = await countryService.updateCountry(
-    Number(countryId),
-    countryName,
-  );
+  if (!countryId) throw new AppError(400, "Country ID is required");
+  if (!countryName) throw new AppError(400, "Country name is required");
+
+  const result = await countryService.updateCountry(countryId, countryName);
 
   return ApiResponse.success(res, 200, "Country updated successfully", result);
 });
 
-// delete country name
+// Delete country
 const deleteCountry = catchAsync(async (req: Request, res: Response) => {
   const { countryId } = req.body;
-  if (!countryId) {
-    throw new AppError(404, "Country id required");
-  }
 
-  const result = await countryService.deleteCountry(Number(countryId));
+  if (!countryId) throw new AppError(400, "Country ID is required");
 
-  return ApiResponse.success(res, 200, "Country updated successfully", result);
+  const result = await countryService.deleteCountry(countryId);
+
+  return ApiResponse.success(res, 200, "Country deleted successfully", result);
 });
 
 const CountryController = {
